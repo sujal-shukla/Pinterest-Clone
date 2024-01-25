@@ -1,9 +1,34 @@
-
+"use client"
 import { BellIcon, ChatBubbleBottomCenterIcon, MagnifyingGlassIcon } from '@heroicons/react/16/solid'
 import Image from 'next/image'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useSession, signIn, signOut } from "next-auth/react"
+import { doc, getFirestore, setDoc } from 'firebase/firestore'
+import app from '../firebaseconfig'
 
 const Header = () => {
+    const { data: session } = useSession()
+
+    const db = getFirestore(app);
+
+    useEffect(() => {
+        SaveUserInfo();
+    },[session])
+
+    const SaveUserInfo = async () => {
+        if (session?.user) {
+            await setDoc(doc(db, "user", session.user.email), {
+                UserName: session.user.name,
+                Email: session.user.email,
+                Image: session.user.image
+              });
+        }
+    }
+
+
+
+    
+
     return (
         <div className='flex gap-3 md:gap-2 items-center p-6'>
             <Image src='/logo.png' alt='logo' height={50} width={50}
@@ -16,8 +41,10 @@ const Header = () => {
             </div>
             <BellIcon className='h-3 md:h-11 hover:bg-gray-300 p-2 rounded-full cursor-pointer ' />
             <ChatBubbleBottomCenterIcon className='h-3 md:h-11 hover:bg-gray-300 p-1 rounded-full cursor-pointer' />
-            <Image src='/man.png' alt='Profile' height={50} width={50}
-                className='hover:bg-gray-300 p-2 rounded-full cursor-pointer' />
+            {session?.user ? <Image src={session?.user?.image} alt='Profile' height={50} width={50}
+                className='hover:bg-gray-300 p-2 rounded-full cursor-pointer' /> :
+                <button className='p-2 rounded-full px-4 font-semibold  hover:bg-gray-300' onClick={() => signIn()}>Login</button>}
+
         </div>
     )
 }
