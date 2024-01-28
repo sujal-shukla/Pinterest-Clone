@@ -1,28 +1,20 @@
 import app from '@/app/firebaseconfig'
-import { getFirestore } from 'firebase/firestore'
 import React, { useEffect } from 'react'
-import { collection, query, where, getDocs } from "firebase/firestore";
-
-const PinList = ({ userInfo }) => {
-    const db = getFirestore(app)
-
-    useEffect(() => {
-        getUserPins()
-    },[])
-
-
-    const getUserPins = async () => {
-        const q = query(collection(db, "pinterest-post"), where("email", "==", userInfo.email));
-
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
-        });
-    }
-    return (
-        <div>PinList</div>
-    )
+import PinItem from './PinItem'
+function PinList({listOfPins}) {
+   
+  return (
+    <div className='mt-7 px-2 md:px-5
+     columns-2 md:columns-3
+     lg:columns-4 mb-4
+     xl:columns-5 space-y-6 mx-auto'>
+        {listOfPins.map((item,index)=>(
+           
+               <PinItem pin={item} />
+           
+        ))}
+    </div>
+  )
 }
 
 export default PinList

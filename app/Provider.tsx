@@ -2,11 +2,11 @@
 import React from 'react'
 import { SessionProvider } from "next-auth/react"
 
-const Provider = ({children}) => {
+function Provider({children}) {
   return (
-    <SessionProvider>
+    <SessionProvider >
         {children}
-  </SessionProvider>
+    </SessionProvider>
   )
 }
 
